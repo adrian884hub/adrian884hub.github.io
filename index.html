@@ -6716,9 +6716,14 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
      ========================================================== */
   var ua = navigator.userAgent || "";
   var enApp = /TikTok|musical_ly|Bytedance|trill|Instagram|FBAN|FBAV|FB_IAB/i.test(ua);
-  var esTikTok = /TikTok|musical_ly|Bytedance|trill/i.test(ua);
   var esAndroid = /Android/i.test(ua);
   var esIOS = /iPhone|iPad|iPod/i.test(ua);
+  var esCelular = esAndroid || esIOS || /Mobile/i.test(ua);
+  /* TikTok (con cualquiera de sus nombres) o, en Android, cualquier navegador interno de una app
+     que no sea Instagram ni Facebook (llevan "; wv)"): se tratan igual, con los arreglos de TikTok */
+  var esWebviewAndroid = esAndroid && /; wv\)/.test(ua) && !/Instagram|FBAN|FBAV|FB_IAB/i.test(ua);
+  var esTikTok = /TikTok|musical_ly|Bytedance|trill|ByteLocale|JsSdk/i.test(ua) || esWebviewAndroid;
+  if (esTikTok) { document.documentElement.classList.add("tiktok"); }
 
   function aIntent(url) {
     var u = new URL(url);
@@ -6776,6 +6781,13 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
     } else { planB(); }
   }
 
+  if (/[?&]ua=1/.test(location.search)) {
+    var diag = document.createElement("p");
+    diag.style.cssText = "margin:18px 12px;padding:10px;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font:12px/1.4 monospace;word-break:break-all";
+    diag.textContent = "Navegador: " + ua + " | TikTok: " + (esTikTok ? "sí" : "no") + " | Celular: " + (esCelular ? "sí" : "no");
+    document.body.appendChild(diag);
+  }
+
   LINKS.forEach(function (l) {
     if (!l.url) return;
     var a = document.createElement("a");
@@ -6786,7 +6798,8 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
        son links comunes, sin trucos. En el resto queda igual que antes. */
     var afuera = enApp && esAndroid && !esTikTok && l.id !== "whatsapp" && l.id !== "gmail";
     a.href = afuera ? aIntent(l.url) : l.url;
-    if (!afuera && !esTikTok) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+    /* Ventana nueva solo en la compu: en el celular los navegadores de las apps la bloquean */
+    if (!afuera && !esTikTok && !esCelular) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
     a.style.animationDelay = (0.4 + 0.09 * n++) + "s";
 
     var luz = document.createElement("div");
