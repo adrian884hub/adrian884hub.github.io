@@ -6845,8 +6845,9 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
         }, 1500);
       });
     }
-    /* WhatsApp dentro de TikTok: TikTok suele bloquear la app de WhatsApp, así que el primer
-       toque copia el número (nadie se queda trabado) y el segundo intenta abrir WhatsApp igual */
+    /* WhatsApp dentro de TikTok: TikTok no deja abrir la app de WhatsApp (probado en Android,
+       30/09/2026), así que el primer toque copia el número y explica cómo abrir la página en el
+       navegador, donde el botón sí abre el chat. El segundo toque intenta abrir WhatsApp igual. */
     if (esTikTok && l.id === "whatsapp") {
       var copiado = false;
       a.addEventListener("click", function (e) {
@@ -6854,10 +6855,10 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
         e.preventDefault();
         copiar("+542616373263", function () {
           copiado = true;
-          t2.textContent = "¡Número copiado! Abrí WhatsApp y pegalo · Tocá de nuevo para intentar abrirlo";
+          t2.textContent = "¡Número copiado! Para abrir el chat: tocá ⋯ arriba → Abrir en el navegador";
         }, function () {
           copiado = true;
-          t2.textContent = "Nuestro WhatsApp: +54 261 637-3263 · Tocá de nuevo para abrirlo";
+          t2.textContent = "WhatsApp: +54 261 637-3263 · Para abrir el chat: tocá ⋯ arriba → Abrir en el navegador";
         });
       });
     }
