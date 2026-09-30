@@ -337,6 +337,7 @@
   .tiktok .titulo { font-size: 12px; line-height: 1.35; margin-bottom: 0; }
   .tiktok .lugar { font-size: 12px; margin-bottom: 5px; }
   .tiktok .estado { font-size: 11px; margin-bottom: 8px; }
+  .tiktok .desc { white-space: normal; }               /* los avisos ("¡Número copiado!...") se leen enteros */
 </style>
 </head>
 <body>
@@ -6682,7 +6683,7 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
     },
     {
       id: "ebooks",
-      titulo: "Mendu Ebooks",
+      titulo: "MenduEbook",
       desc: "Plataforma con IA · ebooks en minutos",
       url: "https://mendumarket.com.ar/",
       icono: '<svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.65 1 5.75V20.5c1.45-1.1 3.55-1.5 5.5-1.5s4.05.4 5.5 1.5c1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5V5zm-2 12c-.88-.23-1.89-.35-3-.35-1.95 0-4.05.4-5.5 1.5V7.75c1.45-1.1 3.55-1.5 5.5-1.5 1.11 0 2.12.12 3 .35V17z"/></svg>'
@@ -6821,6 +6822,30 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
       a.addEventListener("click", function (e) {
         e.preventDefault();
         t2.textContent = "Tocá ⋯ → Abrir en el navegador";
+      });
+    }
+    /* Android: si TikTok frena el salto al navegador, a los 1,5 s se explica cómo hacerlo a mano */
+    if (esTikTok && l.id === "abrir" && !esIOS) {
+      a.addEventListener("click", function () {
+        setTimeout(function () {
+          if (!document.hidden) { t2.textContent = "Si no se abrió: tocá ⋯ arriba → Abrir en el navegador"; }
+        }, 1500);
+      });
+    }
+    /* WhatsApp dentro de TikTok: TikTok suele bloquear la app de WhatsApp, así que el primer
+       toque copia el número (nadie se queda trabado) y el segundo intenta abrir WhatsApp igual */
+    if (esTikTok && l.id === "whatsapp") {
+      var copiado = false;
+      a.addEventListener("click", function (e) {
+        if (copiado) { return; }            /* segundo toque: sigue el link a WhatsApp */
+        e.preventDefault();
+        copiar("+542616373263", function () {
+          copiado = true;
+          t2.textContent = "¡Número copiado! Abrí WhatsApp y pegalo · Tocá de nuevo para intentar abrirlo";
+        }, function () {
+          copiado = true;
+          t2.textContent = "Nuestro WhatsApp: +54 261 637-3263 · Tocá de nuevo para abrirlo";
+        });
       });
     }
     if (esTikTok && l.id === "gmail") {
