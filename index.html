@@ -348,13 +348,14 @@
     cursor: pointer; animation: flechaEntra .5s ease both .3s;
   }
   .flecha-tiktok span {
-    padding: 5px 11px; border-radius: 999px;
+    min-width: 0; overflow: hidden; text-overflow: ellipsis;   /* si no entra, se achica en vez de salirse */
+    padding: 4px 10px; border-radius: 999px;
     background: rgba(123,79,209,.66); border: 1px solid rgba(239,231,251,.35); color: #FFFFFF;
-    font-size: 12px; font-weight: 700; white-space: nowrap;
+    font-size: 11px; font-weight: 700; white-space: nowrap;
   }
-  .flecha-tiktok svg { width: 28px; height: 28px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5));
+  .flecha-tiktok svg { width: 24px; height: 24px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5));
     animation: flechaSalta 1.1s ease-in-out infinite; }
-  @keyframes flechaSalta { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(3px, -5px); } }
+  @keyframes flechaSalta { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
   @keyframes flechaEntra { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) { .flecha-tiktok svg, .tiktok .flecha-tiktok { animation: none; } }
 </style>
@@ -367,8 +368,8 @@
   <!-- Solo dentro de TikTok: flechita hacia los tres puntitos (•••) de arriba a la derecha.
        Se va al tocarla. -->
   <div class="flecha-tiktok" id="flechaTiktok" role="note">
-    <span>Tocá ••• arriba → Abrir en el navegador</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+    <span>Abrí en el navegador</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V4"/><path d="m5 11 7-7 7 7"/></svg>
   </div>
 
   <!-- Aviso: solo aparece dentro de TikTok / Instagram / Facebook -->
