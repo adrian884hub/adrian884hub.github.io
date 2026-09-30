@@ -338,9 +338,36 @@
   .tiktok .lugar { font-size: 12px; margin-bottom: 5px; }
   .tiktok .estado { font-size: 11px; margin-bottom: 8px; }
   .tiktok .desc { white-space: normal; }               /* los avisos ("¡Número copiado!...") se leen enteros */
+
+  /* ===== Flechita "Abrí en el navegador" (solo dentro de TikTok) ===== */
+  .flecha-tiktok { display: none; }
+  .tiktok .flecha-tiktok {
+    display: flex; flex-direction: column; align-items: flex-end;
+    position: fixed; top: 4px; right: 10px; z-index: 50;
+    pointer-events: auto; cursor: pointer;
+    animation: flechaEntra .5s ease both .3s;
+  }
+  .flecha-tiktok svg { width: 46px; height: 46px; margin-right: 2px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.55));
+    animation: flechaSalta 1.1s ease-in-out infinite; }
+  .flecha-tiktok span {
+    margin-top: 2px; padding: 7px 12px; border-radius: 999px;
+    background: #7B4FD1; border: 1px solid rgba(239,231,251,.55); color: #FFFFFF;
+    font-size: 13px; font-weight: 800; white-space: nowrap; box-shadow: 0 6px 18px rgba(0,0,0,.45);
+  }
+  .flecha-tiktok small { display: block; font-size: 11px; font-weight: 600; opacity: .85; text-align: center; }
+  @keyframes flechaSalta { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, -9px); } }
+  @keyframes flechaEntra { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .flecha-tiktok svg, .tiktok .flecha-tiktok { animation: none; } }
 </style>
 </head>
 <body>
+
+<!-- Solo dentro de TikTok: flechita hacia los tres puntitos (•••) de arriba a la derecha.
+     Se va al tocarla. -->
+<div class="flecha-tiktok" id="flechaTiktok" role="note">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+  <span>Abrí en el navegador<small>Tocá ••• arriba → Abrir en el navegador</small></span>
+</div>
 
 <main class="main">
 
@@ -6659,6 +6686,9 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
      3) LINKS — EDITÁ SOLO ESTA LISTA
         Para ocultar un botón, dejá la url vacía: url: ""
      ========================================================== */
+  var flechaTiktok = document.getElementById("flechaTiktok");
+  if (flechaTiktok) { flechaTiktok.addEventListener("click", function () { flechaTiktok.style.display = "none"; }); }
+
   var LINKS = [
     {
       id: "whatsapp", principal: true,
@@ -6751,18 +6781,6 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
   var cont = document.getElementById("links");
   var n = 0;
 
-  /* Solo en TikTok: primer botón "Abrí aquí" para salir al navegador del celular.
-     - Android: usa el link tipo intent en su forma más simple (la que mejor funciona).
-     - iPhone: TikTok no permite salir con un link, así que el botón explica cómo hacerlo. */
-  if (esTikTok) {
-    LINKS.unshift({
-      id: "abrir",
-      titulo: "Abrí aquí",
-      desc: "Verla completa en tu navegador",
-      url: esIOS ? "#" : "intent://" + location.host + location.pathname + location.search + "#Intent;scheme=https;end",
-      icono: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>'
-    });
-  }
 
   /* Copiar texto (para el mail dentro de TikTok, que no deja abrir apps de correo) */
   function copiar(texto, ok, fallo) {
@@ -6779,13 +6797,6 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(texto).then(ok, planB);
     } else { planB(); }
-  }
-
-  if (/[?&]ua=1/.test(location.search)) {
-    var diag = document.createElement("p");
-    diag.style.cssText = "margin:18px 12px;padding:10px;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font:12px/1.4 monospace;word-break:break-all";
-    diag.textContent = "Navegador: " + ua + " | TikTok: " + (esTikTok ? "sí" : "no") + " | Celular: " + (esCelular ? "sí" : "no");
-    document.body.appendChild(diag);
   }
 
   LINKS.forEach(function (l) {
@@ -6831,20 +6842,6 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
     a.appendChild(izq);
     a.insertAdjacentHTML("beforeend", flecha);
 
-    if (esTikTok && l.id === "abrir" && esIOS) {
-      a.addEventListener("click", function (e) {
-        e.preventDefault();
-        t2.textContent = "Tocá ⋯ → Abrir en el navegador";
-      });
-    }
-    /* Android: si TikTok frena el salto al navegador, a los 1,5 s se explica cómo hacerlo a mano */
-    if (esTikTok && l.id === "abrir" && !esIOS) {
-      a.addEventListener("click", function () {
-        setTimeout(function () {
-          if (!document.hidden) { t2.textContent = "Si no se abrió: tocá ⋯ arriba → Abrir en el navegador"; }
-        }, 1500);
-      });
-    }
     /* WhatsApp dentro de TikTok: TikTok no deja abrir la app de WhatsApp (probado en Android,
        30/09/2026), así que el primer toque copia el número y explica cómo abrir la página en el
        navegador, donde el botón sí abre el chat. El segundo toque intenta abrir WhatsApp igual. */
@@ -6855,10 +6852,10 @@ cZ4O4dK5hD81ozvExavEbBAKR/8zXNUqn9xniUvLSbhUzhE=
         e.preventDefault();
         copiar("+542616373263", function () {
           copiado = true;
-          t2.textContent = "¡Número copiado! Para abrir el chat: tocá ⋯ arriba → Abrir en el navegador";
+          t2.textContent = "¡Número copiado! Para abrir el chat: tocá ••• arriba → Abrir en el navegador";
         }, function () {
           copiado = true;
-          t2.textContent = "WhatsApp: +54 261 637-3263 · Para abrir el chat: tocá ⋯ arriba → Abrir en el navegador";
+          t2.textContent = "WhatsApp: +54 261 637-3263 · Para abrir el chat: tocá ••• arriba → Abrir en el navegador";
         });
       });
     }
