@@ -48,6 +48,16 @@
   }
   .main { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
 
+  /* En el celular las dos columnas no existen: todo va en una sola, en este orden */
+  .col-perfil, .col-proyectos { display: contents; }
+  .flecha-tiktok { order: 1; }
+  .inapp { order: 2; }
+  .hero { order: 3; }
+  .links { order: 4; }
+  .proyectos { order: 5; }
+  .logos { order: 6; }
+  footer { order: 7; }
+
   /* Aviso navegador interno */
   .inapp {
     display: none;
@@ -170,14 +180,9 @@
   }
   .hero h1 {
     font-size: 34px; line-height: 1.05; font-weight: 800; letter-spacing: -0.03em;
-    color: #FFFFFF; margin-bottom: 4px;
+    color: #FFFFFF; margin-bottom: 8px;
     text-shadow: 0 2px 6px rgba(0,0,0,.5);
   }
-  .lugar {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 13.5px; color: #EFE7FB; margin-bottom: 6px;
-  }
-  .lugar svg { width: 14px; height: 14px; fill: #EFE7FB; flex-shrink: 0; }
   .titulo { font-size: 14.5px; color: #D1C4E9; line-height: 1.35; margin-bottom: 12px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
   .chips li {
@@ -365,6 +370,77 @@
   @media (min-width: 700px) {
     .panel { margin: auto; max-width: 440px; border-bottom: 1px solid rgba(239,231,251,.22); border-radius: 22px; }
   }
+  .tarjeta small { display: none; }
+
+  /* ================= TABLET PARADA: a todo el ancho ================= */
+  /* Arriba la tarjeta del video y los botones uno al lado del otro (misma altura);
+     debajo los proyectos de a 4 y los logos en una fila */
+  @media (min-width: 700px) and (max-width: 899px) {
+    body { padding: 24px 24px 40px; }
+    .main { max-width: none; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .flecha-tiktok, .inapp, .proyectos, .logos, footer { grid-column: 1 / -1; }
+    .hero { grid-column: 1; aspect-ratio: auto; min-height: 460px; }
+    .links { grid-column: 2; justify-content: space-between; }
+    .desc { white-space: normal; }
+    .grilla { grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .logos { grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  }
+
+  /* ================= EN LA COMPU: dos columnas, a todo el ancho ================= */
+  @media (min-width: 900px) {
+    body { padding: 32px 40px 48px; }
+    .main {
+      --izq: 360px;   /* ancho de la columna del perfil: crece con la pantalla (abajo) */
+      max-width: 1840px;
+      display: grid; grid-template-columns: var(--izq) minmax(0, 1fr);
+      column-gap: 40px; row-gap: 28px;
+    }
+    .col-perfil, .col-proyectos { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+    /* Las dos columnas terminan a la misma altura: la más corta reparte el espacio que le sobra */
+    .links { flex: 1; justify-content: space-between; }
+    .proyectos { flex: 1; padding-top: 0; gap: 12px; }
+    .grilla { flex: 1; align-content: space-between; gap: 16px; }
+    .hero { aspect-ratio: 4 / 5; }
+    /* Los logos, repartidos de borde a borde debajo de las dos columnas */
+    .logos, footer { grid-column: 1 / -1; }
+    .logos { grid-template-columns: repeat(10, 76px); justify-content: space-between; gap: 10px; padding: 0; }
+    footer { padding-top: 0; }
+    .proyectos h2 { font-size: 28px; }
+    .bajada { font-size: 14px; }
+    .tarjeta { padding: 8px 8px 12px; gap: 8px; border-radius: 16px; }
+    .tarjeta img { border-radius: 11px; }
+    .tarjeta span { font-size: 15px; padding: 0 4px; }
+    .tarjeta small {
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+      margin-top: -4px; padding: 0 4px;
+      font-size: 12.5px; line-height: 1.35; color: #D1C4E9;
+    }
+  }
+  @media (min-width: 1100px) {
+    .main { --izq: clamp(380px, calc(47vw - 150px), 460px); }
+  }
+  /* Pantallas grandes: la columna del perfil más ancha y la tarjeta del video con su forma completa */
+  @media (min-width: 1300px) {
+    .main { --izq: clamp(420px, calc(47vw - 171px), 580px); }
+    .hero { aspect-ratio: 4 / 6; }
+    .proyectos h2 { font-size: 32px; }
+    .tarjeta span { font-size: 16px; }
+    .tarjeta small { font-size: 13.5px; }
+  }
+  /* Pantallas muy anchas: la columna del perfil más ancha (un tercio largo de la página),
+     los botones de a dos y 4 proyectos por fila. La tarjeta del video toma el alto justo
+     para que las dos columnas terminen parejas */
+  @media (min-width: 1580px) {
+    .main {
+      --ancho: min(100vw - 80px, 1840px);
+      --izq: calc(var(--ancho) * .35);
+    }
+    .grilla { grid-template-columns: repeat(4, 1fr); }
+    .hero { aspect-ratio: auto; height: calc(var(--ancho) * .9 - var(--izq) * .75 - 443px); }
+    .links { display: grid; grid-template-columns: 1fr 1fr; align-content: space-between; }
+    .links .item.principal { grid-column: 1 / -1; }
+    .desc { white-space: normal; }
+  }
 
   footer { text-align: center; padding: 14px 0 4px; font-size: 12.5px; color: #D1C4E9; }
 
@@ -408,7 +484,6 @@
   .tiktok .chips { display: none; }                     /* sin etiquetas (Python, Ecommerce...) */
   .tiktok .hero h1 { font-size: 24px; margin-bottom: 3px; }
   .tiktok .titulo { font-size: 12px; line-height: 1.35; margin-bottom: 0; }
-  .tiktok .lugar { font-size: 12px; margin-bottom: 5px; }
   .tiktok .desc { white-space: normal; }               /* los avisos ("¡Número copiado!...") se leen enteros */
 
   /* ===== Aviso "Tocá ••• arriba" con flechita (solo dentro de TikTok) =====
@@ -455,58 +530,60 @@
 
 <main class="main">
 
-  <!-- Solo dentro de TikTok: flechita hacia los tres puntitos (•••) de arriba a la derecha.
-       Se va al tocarla. -->
-  <div class="flecha-tiktok" id="flechaTiktok" role="note">
-    <span data-i18n="abrir">Abrí en el navegador</span>
-    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V4"/><path d="m5 11 7-7 7 7"/></svg>
-  </div>
-
-  <!-- Aviso: solo aparece dentro de TikTok / Instagram / Facebook -->
-  <div class="inapp" id="inapp">
-    <div id="inappAcc"></div>
-  </div>
-
-  <header class="hero">
-    <div class="hero-fondo" aria-hidden="true"></div>
-
-    <!-- VIDEO: es el archivo trabajo.mp4, al lado de esta página. Mientras carga se ve su primera imagen. -->
-    <div class="marco" id="marco" aria-hidden="true">
-      <video id="vid" src="trabajo.mp4" poster="imagenes/portada-video.jpg" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
-    </div>
-    <div class="hero-sombra" aria-hidden="true"></div>
-
-    <div class="tab" aria-hidden="true"><i></i><i></i><i></i><span>adrian.py</span></div>
-    <div class="idioma" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es" lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button></div>
-    <div class="codigo" aria-hidden="true">
-      <div class="codigo-mov" id="codigoMov"></div>
+  <!-- En la compu: el perfil a la izquierda y los proyectos a la derecha.
+       En el celular va todo en una sola columna (el orden está en los estilos). -->
+  <div class="col-perfil">
+    <!-- Solo dentro de TikTok: flechita hacia los tres puntitos (•••) de arriba a la derecha.
+         Se va al tocarla. -->
+    <div class="flecha-tiktok" id="flechaTiktok" role="note">
+      <span data-i18n="abrir">Abrí en el navegador</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V4"/><path d="m5 11 7-7 7 7"/></svg>
     </div>
 
-    <div class="hero-grad">
-      <h1>Adrián Pereyra</h1>
-      <div class="lugar">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        <span>Mendoza, Argentina</span>
+    <!-- Aviso: solo aparece dentro de TikTok / Instagram / Facebook -->
+    <div class="inapp" id="inapp">
+      <div id="inappAcc"></div>
+    </div>
+
+    <header class="hero">
+      <div class="hero-fondo" aria-hidden="true"></div>
+
+      <!-- VIDEO: es el archivo trabajo.mp4, al lado de esta página. Mientras carga se ve su primera imagen. -->
+      <div class="marco" id="marco" aria-hidden="true">
+        <video id="vid" src="trabajo.mp4" poster="imagenes/portada-video.jpg" autoplay muted loop playsinline webkit-playsinline preload="auto"></video>
       </div>
-      <p class="titulo" data-i18n="titulo">Desarrollador web en Mendoza. Hago páginas, tiendas online, bots de WhatsApp y herramientas con inteligencia artificial.</p>
-      <ul class="chips" aria-label="Especialidades" data-i18n-aria="especialidades">
-        <li>Python</li>
-        <li data-i18n="ia">Inteligencia artificial</li>
-        <li>Ecommerce</li>
-        <li data-i18n="web">Desarrollo web</li>
-        <li>Pine Script</li>
-      </ul>
-    </div>
-  </header>
+      <div class="hero-sombra" aria-hidden="true"></div>
 
-  <nav class="links" id="links" aria-label="Enlaces de contacto y proyectos" data-i18n-aria="enlaces"></nav>
+      <div class="tab" aria-hidden="true"><i></i><i></i><i></i><span>adrian.py</span></div>
+      <div class="idioma" role="group" aria-label="Idioma / Language"><button type="button" data-lang="es" lang="es" aria-pressed="true">ES</button><button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button></div>
+      <div class="codigo" aria-hidden="true">
+        <div class="codigo-mov" id="codigoMov"></div>
+      </div>
 
-  <!-- PROYECTOS: las tarjetas se arman solas con la lista PROYECTOS de abajo -->
-  <section class="proyectos" aria-labelledby="tituloProyectos">
-    <h2 id="tituloProyectos" data-i18n="proyectos">Proyectos</h2>
-    <p class="bajada" data-i18n="proyectosBajada">Tocá uno para ver qué hace.</p>
-    <ul class="grilla" id="grilla"></ul>
-  </section>
+      <div class="hero-grad">
+        <h1>Adrián Pereyra</h1>
+        <p class="titulo" data-i18n="titulo">Desarrollador de software | Páginas web | Python e IA. Marketing digital y de contenidos para redes sociales. Creador de mendumarket.com y mendumarket.com.ar</p>
+        <ul class="chips" aria-label="Especialidades" data-i18n-aria="especialidades">
+          <li>Python</li>
+          <li data-i18n="ia">Inteligencia artificial</li>
+          <li>Ecommerce</li>
+          <li data-i18n="web">Desarrollo web</li>
+          <li>Pine Script</li>
+        </ul>
+      </div>
+    </header>
+
+    <nav class="links" id="links" aria-label="Enlaces de contacto y proyectos" data-i18n-aria="enlaces"></nav>
+  </div>
+
+  <div class="col-proyectos">
+    <!-- PROYECTOS: las tarjetas se arman solas con la lista PROYECTOS de abajo -->
+    <section class="proyectos" aria-labelledby="tituloProyectos">
+      <h2 id="tituloProyectos" data-i18n="proyectos">Proyectos</h2>
+      <p class="bajada" data-i18n="proyectosBajada">Tocá uno para ver qué hace.</p>
+      <ul class="grilla" id="grilla"></ul>
+    </section>
+  </div>
 
   <ul class="logos" aria-label="Tecnologías y plataformas" data-i18n-aria="tecnologias">
       <li title="Python" aria-label="Python"><svg viewBox="0 0 24 24" role="img" aria-hidden="true"><path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg></li>
@@ -552,7 +629,7 @@
       tituloPagina: "Adrián Pereyra | Desarrollador web en Mendoza",
       descPagina: "Adrián Pereyra, desarrollador web en Mendoza. Hago páginas, tiendas online, bots de WhatsApp y herramientas con inteligencia artificial.",
       abrir: "Abrí en el navegador",
-      titulo: "Desarrollador web en Mendoza. Hago páginas, tiendas online, bots de WhatsApp y herramientas con inteligencia artificial.",
+      titulo: "Desarrollador de software | Páginas web | Python e IA. Marketing digital y de contenidos para redes sociales. Creador de mendumarket.com y mendumarket.com.ar",
       ia: "Inteligencia artificial",
       web: "Desarrollo web",
       especialidades: "Especialidades",
@@ -571,7 +648,7 @@
       tituloPagina: "Adrián Pereyra | Web developer in Mendoza",
       descPagina: "Adrián Pereyra, web developer in Mendoza, Argentina. I build websites, online stores, WhatsApp bots and AI-powered tools.",
       abrir: "Open in browser",
-      titulo: "Web developer in Mendoza. I build websites, online stores, WhatsApp bots and AI-powered tools.",
+      titulo: "Software developer | Websites | Python and AI. Digital and content marketing for social media. Creator of mendumarket.com and mendumarket.com.ar",
       ia: "Artificial intelligence",
       web: "Web development",
       especialidades: "Specialties",
@@ -1049,19 +1126,26 @@
     b.className = "tarjeta";
     var foto = document.createElement("img");
     foto.src = "imagenes/proyectos/chicas/" + p.id + ".jpg";
+    foto.srcset = "imagenes/proyectos/chicas/" + p.id + ".jpg 300w, imagenes/proyectos/" + p.id + ".jpg 600w";
+    foto.sizes = "(min-width: 1300px) 20vw, (min-width: 900px) 22vw, 32vw";
     foto.alt = "";
     foto.width = 300; foto.height = 300;
     foto.loading = "lazy"; foto.decoding = "async";
     var nom = document.createElement("span");
+    var lin = document.createElement("small");   /* la línea corta: solo se ve en la compu */
     b.appendChild(foto);
     b.appendChild(nom);
+    b.appendChild(lin);
     b.addEventListener("click", function () { abrirPanel(p); });
     li.appendChild(b);
     grilla.appendChild(li);
-    tarjetas.push({ p: p, nom: nom });
+    tarjetas.push({ p: p, nom: nom, lin: lin });
   });
   function pintarTarjetas() {
-    tarjetas.forEach(function (c) { c.nom.textContent = texto(c.p, "nombre"); });
+    tarjetas.forEach(function (c) {
+      c.nom.textContent = texto(c.p, "nombre");
+      c.lin.textContent = texto(c.p, "linea");
+    });
   }
 
   /* El panel chico */
